@@ -1,0 +1,19 @@
+/* Hack found for fixing modal behaviour in Bootstrap 3.1.1 */
+body {
+overflow-y: scroll;
+}
+body.modal-open {
+overflow-y: scroll;
+margin: 0;
+}
+.modal {
+overflow: auto;
+}
+/* End hack */
+.city-tile{float: left;}
+.city-tile-hidden{visibility: hidden;}
+.modal-tile-grid{display: table;}
+.custom-small-input{width: 64px;}
+.form-inline .custom-small-input{width: 64px;}
+.tile-new-row{clear: left;}
+.tile-popup-column{float: left;}

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/cities.css" rel="stylesheet">
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/underscore.js"></script>
+    <script src="js/backbone.js"></script>
+</head>
+<body>
+<div class="container" id="city">
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Civ 4 City Simulator</a>
+            </div>
+        </div>
+    </nav>
+
+    <form class="form-inline text-right" role="form">
+        <div class="form-group">
+            <input type="text" class="form-control" id="city-filename" placeholder="Filename">
+        </div>
+
+        <button type="button" id="load-city" class="btn btn-default">Load</button>
+        <button type="button" id="save-city" class="btn btn-default">Save</button>
+    </form>
+    <div>
+        <h4>Tile yields for turn <span id="tile-grid-turn-text"></span>:</h4>
+        <div class="col-md-4" id="tile-grid"></div>
+        <div class="col-md-8" id="city-header">
+            <form class="form-horizontal" id="city-header-form" role="form">
+                <div class="form-group">
+                    <label class="control-label col-md-2">Start turn</label>
+                    <input type="text" class="form-control custom-small-input" id="start-turn-input">
+                </div>
+                <div class="form-inline">
+                    <div class="checkbox col-md-offset-2">
+                        <label><input type="checkbox" id="capital-checkbox"> Capital</label>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" id="financial-checkbox"> Financial</label>
+                    </div>
+                </div>
+                <div class="checkbox col-md-offset-2">
+                    <label><input type="checkbox" id="speed-checkbox"> Quick speed</label>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <table class="table table-striped table-hover table-condensed">
+        <thead>
+            <th>Turn</th>
+            <th>Tiles</th>
+            <th>Pop</th>
+            <th>Food</th>
+            <th>Build</th>
+            <th>Action</th>
+            <th>Hammers</th>
+            <th>Commerce</th>
+            <th>Notes</th>
+            <th>User Note</th>
+        </thead>
+        <tbody id="city-turns"></tbody>
+    </table>
+
+</div>
+
+<div id="tile-popup" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="tile-select-popup" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div id="modal-tile-grid" class="modal-tile-grid"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="build-select-popup" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="action-select-popup" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/template" id="edit-tile-template">
+    <% _.each(["Food", "Prod", "Commerce"], function(cur_resource) { %>
+        <div class=""><small><%= cur_resource %></small></div>
+        <div class="btn-group" data-toggle="buttons">
+            <% for (var i=0; i<=8; i++) { %>
+            <label class="btn btn-primary btn-sm" name="<%= cur_resource %>" value="<%= i %>">
+                <input type="radio" name="<%= cur_resource %>" value="<%= i %>"> <%= i %>
+            </label>
+            <% } // for %>
+        </div>
+    <% }); // each %>
+    <div class="row">
+        <div class="col-md-6">
+            <div><small>Cottage turns</small></div>
+
+        </div>
+        <div class="col-md-6">
+            <div><small>Net Commerce: </small><small class="net-commerce-text"></small></div>
+        </div>
+    </div>
+    <div class="form-inline">
+        <input type="text" class="form-control input-sm custom-small-input cottage-turn-input">
+        <button type="button" class="btn btn-primary btn-sm new-cottage-button">New Cottage</button>
+    </div>
+</script>
+
+<script type="text/template" id="city-tile-template">
+    <button type="button" class="btn btn-default btn-sm city-tile<% if (y==0) { %> tile-new-row<% } %><% if (!valid) { %> city-tile-hidden<% } %>"
+            data-x="<%- x %>" data-y="<%- y %>">
+        <%- f %>/<%- h %>/<%- netCommerce %>
+    </button>
+</script>
+
+<script type="text/template" id="city-turn-template">
+    <td><%- turn %></td>
+    <td class="tile-select<% if (!validTiles) { %> danger<% } %>"><small><%- tilesWorked %></small></td>
+    <td><% if (popWhipped > 0) { %><%- (pop + popWhipped) + "->" + (pop) %><% } else { %><%- pop %><% } %></td>
+    <td><%- food %><%- (foodSurplus >= 0 ? '+':'-') + Math.abs(foodSurplus) %> / <%- foodToGrow %></td>
+    <td class="build-select"><%- build.name %></td>
+    <td class="action-select"><%- actionString %></td>
+    <td><%- hammers %>+<%- hammersProduced %> / <%- build.hammers %> (<%- totals.h %>)</td>
+    <td><%- totals.c %>+<%- commerceProduced %></td>
+    <td><small><%- notes %></small></td>
+    <td><small>
+        <input type="text" class="form-control input-sm user-note" value="<%- userNote %>">
+    </small></td>
+</script>
+
+<script type="text/template" id="build-select-template">
+<form role="form">
+    <div class="form-group">
+        <label>Select from Presets</label>
+        <select class="form-control" name="build-preset">
+            <option>(Select preset)</option>
+            <% _.each(presets, function(preset) { %>
+                <option><%- preset.name %></option>
+            <% }); %>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Build</label>
+        <input type="text" class="form-control" name="build-name" value="<%- build.name %>">
+    </div>
+    <div class="form-group">
+        <label>Hammer Cost:</label>
+        <input type="text" class="form-control" name="build-hammers" value="<%- build.hammers %>">
+    </div>
+    <div class="form-group">
+        <label>Hammer Bonus</label>
+        <input type="text" class="form-control" name="build-bonus" value="<%- build.bonus %>">
+    </div>
+</form>
+</script>
+
+<script type="text/template" id="action-select-template">
+<form role="form">
+    <div class="form-group">
+        <label>Add Action</label>
+        <select class="form-control" name="action-preset">
+            <option>(Select action)</option>
+            <% _.each(presets, function(preset) { %>
+                <option value="<%- preset.code %>"><%- preset.name %></option>
+            <% }); %>
+        </select>
+    </div>
+</form>
+</script>
+</div>
+    <script src="js/cities-models.js"></script>
+    <script src="js/cities-views.js"></script>
+</body>
+</html>
