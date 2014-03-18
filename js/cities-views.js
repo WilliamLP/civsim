@@ -226,6 +226,7 @@ app.ActionSelectPopupView = Backbone.View.extend({
 
 app.CityTurnView = Backbone.View.extend({
     tagName: 'tr',
+    className: 'city-turn-row',
     template: _.template($('#city-turn-template').html()),
     events: {
     },
@@ -290,12 +291,16 @@ app.CityView = Backbone.View.extend({
     el: $("#city"),
 
     events: {
-        "click tr": "selectRow",
+        "click .city-turn-row": "selectRow",
         "click .tile-select": "selectTiles",
         "click .build-select": "selectBuild",
         "click .action-select": "selectAction",
         "change #city-header-form": "changeCity",
-        "change .user-note": "changeUserNote",
+
+        "click .user-note-cell": "showUserNoteEdit",
+        "blur .user-note-edit": "hideUserNoteEdit",
+        "change .user-note-edit": "changeUserNote",
+
         "click #save-city": "save",
         "click #load-city": "load"
     },
@@ -383,9 +388,23 @@ app.CityView = Backbone.View.extend({
 
         this.stopRendering(false);
     },
+    showUserNoteEdit: function(e) {
+        var $tr = $(e.target).closest('tr');
+        $tr.find('.user-note').addClass('hidden');
+        $tr.find('.user-note-edit').removeClass('hidden').focus();
+    },
+    hideUserNoteEdit: function(e) {
+        var $tr = $(e.target).closest('tr');
+        $tr.find('.user-note').removeClass('hidden');
+        $tr.find('.user-note-edit').addClass('hidden');
+    },
     changeUserNote: function(e) {
-        var turnCid = $(e.target).closest('tr').attr('data-cid');
-        this.model.turns.get(turnCid).set('userNote', $(e.target).val());
+        var $tr = $(e.target).closest('tr');
+        var val = $(e.target).val();
+
+        $tr.find('.user-note').text(val);
+        var turnCid = $tr.attr('data-cid');
+        this.model.turns.get(turnCid).set('userNote', val);
     },
     save: function(e) {
         this.model.save($('#city-filename').val().trim());

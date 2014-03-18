@@ -149,9 +149,10 @@
     <td><%- hammers %>+<%- hammersProduced %> / <%- build.hammers %> (<%- totals.h %>)</td>
     <td><%- totals.c %>+<%- commerceProduced %></td>
     <td><small><%- notes %></small></td>
-    <td><small>
-        <input type="text" class="form-control input-sm user-note" value="<%- userNote %>">
-    </small></td>
+    <td class="user-note-cell"><small>
+        <span class="user-note"><%- userNote %></span>
+        <input type="text" class="form-control input-sm user-note-edit hidden" value="<%- userNote %>">    </small>
+    </td>
 </script>
 
 <script type="text/template" id="build-select-template">
