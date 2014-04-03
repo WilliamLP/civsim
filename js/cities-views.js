@@ -417,5 +417,4 @@ app.CityView = Backbone.View.extend({
 $(function() {
     app.city = new app.City();
     app.cityView = new app.CityView({model: app.city});
-
 });
