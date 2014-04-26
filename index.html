@@ -55,12 +55,11 @@
         <thead>
             <th>Turn</th>
             <th>Tiles</th>
-            <th>F/H/C</th>
-            <th>Pop</th>
-            <th>Growth</th>
+            <th colspan=2>Pop Growth</th>
             <th>Build</th>
             <th></th>
             <th>Action</th>
+            <th>Commerce</th>
             <th>Total H/C</th>
             <th>Notes</th>
             <th>User Note</th>
@@ -144,12 +143,10 @@
     <td><%- turn %></td>
     <td class="tile-select<% if (!validTiles) { %> danger<% } %>"><small><%- tilesWorked %></small></td>
     <td>
-         <%- (foodSurplus >= 0 ? '':'-') + Math.abs(foodSurplus) %>/<%- hammersProduced %>/<%- commerceProduced %></td>
-    <td>
         <% if (popWhipped > 0) { %><%- (pop + popWhipped) + "->" + (pop) %><% } else { %><%- pop %><% } %>
     </td>
     <td>
-        (<%- food %>/<%- foodToGrow %>)
+        (<%- food %><%- (foodSurplus >= 0 ? '+':'-') + Math.abs(foodSurplus) %>/<%- foodToGrow %>)
     </td>
     <td class="build-select">
         <% if (build.name) { %>
@@ -158,10 +155,11 @@
     </td>
     <td>
         <% if (build.name) { %>
-            (<%- hammers %>/<%- build.hammers %>)
+            (<%- hammers %>+<%- hammersProduced %>/<%- build.hammers %>)
         <% } %>
     </td>
     <td class="action-select"><%- actionString %></td>
+    <td><%- commerceProduced %></td>
     <td><%- totals.h %> / <%- totals.c %></td>
     <td><small><%- notes %></small></td>
     <td class="user-note-cell">
