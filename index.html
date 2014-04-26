@@ -55,12 +55,11 @@
         <thead>
             <th>Turn</th>
             <th>Tiles</th>
-            <th>Pop</th>
-            <th>Food</th>
+            <th>F/H/C</th>
+            <th>Pop Growth</th>
             <th>Build</th>
             <th>Action</th>
-            <th>Hammers</th>
-            <th>Commerce</th>
+            <th>Total H/C</th>
             <th>Notes</th>
             <th>User Note</th>
         </thead>
@@ -142,16 +141,25 @@
 <script type="text/template" id="city-turn-template">
     <td><%- turn %></td>
     <td class="tile-select<% if (!validTiles) { %> danger<% } %>"><small><%- tilesWorked %></small></td>
-    <td><% if (popWhipped > 0) { %><%- (pop + popWhipped) + "->" + (pop) %><% } else { %><%- pop %><% } %></td>
-    <td><%- food %><%- (foodSurplus >= 0 ? '+':'-') + Math.abs(foodSurplus) %> / <%- foodToGrow %></td>
-    <td class="build-select"><%- build.name %></td>
+     <td>
+         <%- (foodSurplus >= 0 ? '':'-') + Math.abs(foodSurplus) %>/<%- hammersProduced %>/<%- commerceProduced %></td>
+    <td>
+        <% if (popWhipped > 0) { %><%- (pop + popWhipped) + "->" + (pop) %><% } else { %><%- pop %><% } %>
+        (<%- food %>/<%- foodToGrow %>)
+    </td>
+    <td class="build-select">
+        <% if (build.name) { %>
+            (<%- hammers %>/<%- build.hammers %>) <%- build.name %>
+        <% } %>
+    </td>
     <td class="action-select"><%- actionString %></td>
-    <td><%- hammers %>+<%- hammersProduced %> / <%- build.hammers %> (<%- totals.h %>)</td>
-    <td><%- totals.c %>+<%- commerceProduced %></td>
+    <td><%- totals.h %> / <%- totals.c %></td>
     <td><small><%- notes %></small></td>
-    <td class="user-note-cell"><small>
-        <span class="user-note"><%- userNote %></span>
-        <input type="text" class="form-control input-sm user-note-edit hidden" value="<%- userNote %>">    </small>
+    <td class="user-note-cell">
+        <small>
+            <span class="user-note"><%- userNote %></span>
+            <input type="text" class="form-control input-sm user-note-edit hidden" value="<%- userNote %>">
+        </small>
     </td>
 </script>
 

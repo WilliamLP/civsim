@@ -24,6 +24,8 @@ app.BuildPresets = [
     {name: "Settler", hammers: 100, foodhammers: true},
     {name: "Settler (IMP)", hammers: 100, foodhammers: true, bonus: 50},
     {name: "Warrior", hammers: 15},
+    {name: "Spearman", hammers: 35},
+    {name: "Axeman", hammers: 35},
     {name: "Work Boat", hammers: 30},
     {name: "Granary", hammers: 60, granary: true},
     {name: "Granary (EXP)", hammers: 60, bonus: 100, granary: true}
