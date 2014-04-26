@@ -93,7 +93,7 @@ app.City = Backbone.Model.extend({
         }
         this.trigger('reset');
     },
-    propagateTileSelections: function(startIndex)F {
+    propagateTileSelections: function(startIndex) {
         var selected = this.turns.at(startIndex).selectedTiles;
         for(var i=startIndex+1; i<app.Constants.TURN_COUNT; i++) {
             this.turns.at(i).selectedTiles = _.clone(selected);
