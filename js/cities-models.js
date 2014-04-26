@@ -93,7 +93,7 @@ app.City = Backbone.Model.extend({
         }
         this.trigger('reset');
     },
-    propagateTileSelections: function(startIndex) {
+    propagateTileSelections: function(startIndex)F {
         var selected = this.turns.at(startIndex).selectedTiles;
         for(var i=startIndex+1; i<app.Constants.TURN_COUNT; i++) {
             this.turns.at(i).selectedTiles = _.clone(selected);
@@ -213,6 +213,7 @@ app.CityTurn = Backbone.Model.extend({
                     this.attributes.overflowHammers = Math.floor(
                         (this.attributes.overflowHammers / (1 + prevInfo.build.bonus / 100)));
                 }
+                // Overflow can only be up to the amount of hammers built.
                 this.attributes.overflowHammers = Math.min(this.attributes.overflowHammers, prevInfo.build.hammers);
                 this.buildHammers[prevInfo.build.name] = 0;
 
@@ -232,7 +233,8 @@ app.CityTurn = Backbone.Model.extend({
                 thisGrid.setTile(tile.x, tile.y, newTile);
             }
         });
-        this.totals.h = prevInfo.totals.h + prevInfo.hammersProduced;
+        // Subtract overflow hammers, otherwise we'd double-count them in the total.
+        this.totals.h = prevInfo.totals.h + prevInfo.hammersProduced - this.attributes.overflowHammers;
         this.totals.c = prevInfo.totals.c + prevInfo.commerceProduced;
 
         this.set(attrs);
