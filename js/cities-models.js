@@ -8,13 +8,11 @@ app.Constants = {
         FOOD_TO_GROW_FACTOR: 67,
         COST_FACTOR: 67,
         SETTLER_FACTOR: 65,
-        WHIP_HAMMERS: 20
     },
     Normal: {
         FOOD_TO_GROW_FACTOR: 100,
         COST_FACTOR: 100,
         SETTLER_FACTOR: 100,
-        WHIP_HAMMERS: 30
     }
 }
 
@@ -58,7 +56,8 @@ app.City = Backbone.Model.extend({
             startHammers: 0,
             speed: "Normal",
             isCapital: true,
-            isFinancial: false
+            isFinancial: false,
+            isRBMod: false
         };
     },
     initialize: function() {
@@ -124,20 +123,8 @@ app.City = Backbone.Model.extend({
 
         this.recalc();
     },
-    setSpeed: function(speed) {
-        this.set("speed", speed);
-        this.recalc();
-    },
-    setStartTurn: function(startTurn) {
-        this.set("startTurn", startTurn);
-        this.recalc();
-    },
-    setIsCapital: function(isCapital) {
-        this.set("isCapital", isCapital);
-        this.recalc();
-    },
-    setIsFinancial: function(isFinancial) {
-        this.set("isFinancial", isFinancial);
+    setWithRecalc: function(key, value) {
+        this.set(key, value);
         this.recalc();
     },
     toJSON: function() {
@@ -278,7 +265,12 @@ app.CityTurn = Backbone.Model.extend({
         // Derived hammer info
         info.hammersProduced += info.overflowHammers;
         if (info.popWhipped > 0) {
-            info.hammersProduced += info.popWhipped * app.Constants[this.city.get('speed')].WHIP_HAMMERS;
+            var whipHammers = info.popWhipped * 30;
+            if (this.city.get('isRBMod') && info.popWhipped > 1) {
+                whipHammers -= (info.popWhipped - 1) * 10;
+            }
+
+            info.hammersProduced += Math.floor(whipHammers * app.Constants[this.city.get('speed')].COST_FACTOR / 100);
         }
         info.hammersProduced += this.hammersChopped();
         if (info.build.bonus) {

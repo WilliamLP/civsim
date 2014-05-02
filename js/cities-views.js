@@ -328,6 +328,7 @@ app.CityView = Backbone.View.extend({
         this.$('#capital-checkbox').attr("checked", this.model.get('isCapital'));
         this.$('#financial-checkbox').attr("checked", this.model.get('isFinancial'));
         this.$('#start-turn-input').val(this.model.get('startTurn'));
+        this.$('#rbmod-checkbox').attr("checked", this.model.get('isRBMod'));
         this.addAll();
         this.renderSelectedTurn();
     },
@@ -381,10 +382,11 @@ app.CityView = Backbone.View.extend({
         this.stopRendering(true);
 
         var speedChecked = this.$('#speed-checkbox').is(':checked');
-        this.model.setSpeed(speedChecked ? "Quick" : "Normal");
-        this.model.setIsCapital(this.$('#capital-checkbox').is(':checked'));
-        this.model.setIsFinancial(this.$('#financial-checkbox').is(':checked'));
-        this.model.setStartTurn(parseInt($('#start-turn-input').val()));
+        this.model.setWithRecalc("speed", speedChecked ? "Quick" : "Normal");
+        this.model.setWithRecalc("isCapital", this.$('#capital-checkbox').is(':checked'));
+        this.model.setWithRecalc("isFinancial", this.$('#financial-checkbox').is(':checked'));
+        this.model.setWithRecalc("startTurn", parseInt($('#start-turn-input').val()));
+        this.model.setWithRecalc("isRBMod", this.$('#rbmod-checkbox').is(':checked'));
 
         this.stopRendering(false);
     },
