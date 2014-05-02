@@ -21,14 +21,21 @@ app.Constants = {
 app.BuildPresets = [
     {name: "Worker", hammers: 60, foodhammers: true},
     {name: "Worker (EXP)", hammers: 60, foodhammers: true, bonus: 25},
+    {name: "Work Boat", hammers: 30},
     {name: "Settler", hammers: 100, foodhammers: true},
     {name: "Settler (IMP)", hammers: 100, foodhammers: true, bonus: 50},
     {name: "Warrior", hammers: 15},
+    {name: "Scout", hammers: 15},
+    {name: "Archer", hammers: 25},
     {name: "Spearman", hammers: 35},
     {name: "Axeman", hammers: 35},
-    {name: "Work Boat", hammers: 30},
+    {name: "Chariot", hammers: 30},
     {name: "Granary", hammers: 60, granary: true},
-    {name: "Granary (EXP)", hammers: 60, bonus: 100, granary: true}
+    {name: "Granary (EXP)", hammers: 60, bonus: 100, granary: true},
+    {name: "Monument", hammers: 60},
+    {name: "Barracks", hammers: 60},
+    {name: "Library", hammers: 60}
+
 ];
 
 app.ActionPresets = [
